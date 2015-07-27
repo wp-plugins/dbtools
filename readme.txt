@@ -1,4 +1,5 @@
 === DBtools ===
+Contributors: mdgeus
 Tags: tool, tools, database, optimize, backup
 Requires at least: 3.0.1
 Tested up to: 4.2.3
