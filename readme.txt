@@ -29,6 +29,10 @@ Click Activate Plugin to activate it.
 
 The plugin folder is called DBtools, this is the folder you should upload.
 
+== Screenshots ==
+1. Create backups
+2. optimize or analyse the WP tables
+
 == Changelog ==
 
 = 1.1.5 =
