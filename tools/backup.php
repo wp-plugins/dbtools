@@ -4,6 +4,7 @@ if ( !function_exists( 'add_action' ) ) {
 	echo 'Hi there!  I\'m just a plugin, not much I can do when called directly.';
 	exit;
 }
+
 $dir = plugin_dir_path( __FILE__ );
 $backupdir = str_replace('\tools', '\backups' ,$dir);
 $backupdir = str_replace('/tools', '/backups' ,$backupdir);
@@ -17,10 +18,9 @@ if ($dh = opendir($backupdir)) {
     while (false !== ($entry = readdir($dh))) {
         if ($entry != "." && $entry != ".." && $entry != "index.html") {
         echo '<tr><form method="post" action="">';
-        echo '<td>'.$entry,'</td>';
+        echo '<td><a href="'.plugins_url('DBtools/download.php?file='.$entry).'" title="Download SQL file">'.$entry.'</a></td>';
         echo '<td><input type="hidden" name="file" id="file" value="'.$entry.'" />';
         echo '<input type="submit" name="del" id="del" value="del" /></td>';
-        //echo '<td><input type="submit" name="open" id="open" value="open" /></td>';
         echo '</form></tr>';
         }
     }
@@ -112,22 +112,12 @@ $result = mysql_query($query);
 }
 
 if (isset($_POST['open'])) {
- $file = $_POST['file'];
- $ffile = $backupdir.$file;
-
- if (file_exists($ffile)) {
-    ob_clean();
-    flush();
-        header("Pragma: public");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Cache-Control: private", false);
-        header("Content-Type: application/octet-stream");
-        header("Content-Disposition: attachment; filename=\"$file\";" );
-        header("Content-Transfer-Encoding: binary");
-    readfile($ffile);
-    exit;
- }
+	// echo '<script type="text/javascript">
+	//  window.location.href = "'.admin_url("admin.php?page=dbtools_download&file=$_POST[file]").'";
+	// </script>';
+	echo '<script type="text/javascript">
+	 window.location.href = "'.admin_url("admin.php?page=dbtools_download").'";
+	</script>';
 }
 //wp-admin/admin.php?page=dbtools_optimize
 ?>
