@@ -3,7 +3,7 @@ Contributors: mdgeus
 Tags: tool, tools, database, optimize, backup
 Requires at least: 3.0.1
 Tested up to: 4.2.3
-Stable tag: 1.1.6
+Stable tag: 1.1.7
 License: GPLv2 or later
 
 Wordpress plugin for DB maintenance and backup
@@ -16,6 +16,7 @@ Functionality:
 * Analyze tables
 * database backup
 
+! make sure you test the import of the created backup file, before you rely on the backups !
 
 == Installation ==
 
@@ -36,6 +37,9 @@ The plugin folder is called DBtools, this is the folder you should upload.
 2. optimize or analyse the WP tables
 
 == Changelog ==
+
+= 1.1.7 =
+placed backup location outside the plugin directory so your backups will be kept after deactivating or updating this plugin
 
 = 1.1.6 =
 Now you can download your backup file
