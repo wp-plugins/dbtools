@@ -3,12 +3,13 @@ Contributors: mdgeus
 Tags: tool, tools, database, optimize, backup
 Requires at least: 3.0.1
 Tested up to: 4.2.3
-Stable tag: 1.1.5
+Stable tag: 1.1.6
 License: GPLv2 or later
 
-Wordpress plugin for DB maintenance
+Wordpress plugin for DB maintenance and backup
 
 == Description ==
+Simple tool you can use to backup your Wordpress tables and give an optimize and analyze command.
 
 Functionality:
 * Optimize tables
@@ -30,10 +31,14 @@ Click Activate Plugin to activate it.
 The plugin folder is called DBtools, this is the folder you should upload.
 
 == Screenshots ==
+
 1. Create backups
 2. optimize or analyse the WP tables
 
 == Changelog ==
+
+= 1.1.6 =
+Now you can download your backup file
 
 = 1.1.5 =
 Added - IF NOT EXISTS to the drop table statement
