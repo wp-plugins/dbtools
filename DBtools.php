@@ -33,7 +33,6 @@ $dir = plugin_dir_path( __FILE__ );
 add_action('admin_menu', 'dbtools_menu');
 
 #create the menucode
-if ( !function_exists( 'dbtools_menu' ) ) {
     function dbtools_menu() {
         //add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position );
         add_menu_page('dbtools Options', 'DBtools', 'manage_options', 'dbtools_menu', 'dbtools_options');
@@ -41,10 +40,8 @@ if ( !function_exists( 'dbtools_menu' ) ) {
         add_submenu_page('dbtools_menu', 'Maintenance', 'Maintenance', 'manage_options', 'dbtools_optimize', 'dbtools_optimize');
         add_submenu_page('dbtools_menu', 'Backup', 'Backup', 'manage_options', 'dbtools_backup', 'dbtools_backup');
     }
-}
 
 // Installation script
-if ( !function_exists( 'dbtools_install' ) ) {
     function dbtools_install() {
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -61,19 +58,34 @@ if ( !function_exists( 'dbtools_install' ) ) {
                 fwrite($fh, $indexfile);
             }
         }
+        exit;
     }
-}
 
-if ( !function_exists( 'dbtools_listdb' ) ) {
+    function dbtools_update() {
+        $backupdir = ABSPATH.'dbtoolsbackups';
+        if (!file_exists($backupdir)) {
+            mkdir($backupdir, 0775, true);
+            if (!file_exists($backupdir.'/index.php')) {
+                $fh = fopen($backupdir.'/index.php', 'w+');
+                $indexfile = "<?php"."\n";
+                $indexfile .= "echo 'No peeking here!';"."\n";
+                $indexfile .= "exit;"."\n";
+                $indexfile .= "?>"."\n";
+                fwrite($fh, $indexfile);
+            }
+        }
+    }
+
+
     function dbtools_listdb() {
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
         }
         # listing tables
     }
-}
 
-if ( !function_exists( 'dbtools_del' ) ) {
+
+
     function dbtools_del() {
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -87,9 +99,8 @@ if ( !function_exists( 'dbtools_del' ) ) {
         }
         exit;
     }
-}
 
-if ( !function_exists( 'dbtools_optimize' ) ) {
+
     function dbtools_optimize() {
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -99,9 +110,8 @@ if ( !function_exists( 'dbtools_optimize' ) ) {
         include($dir.'tools/optimize.php');
         exit;
     }
-}
 
-if ( !function_exists( 'dbtools_backup' ) ) {
+
     function dbtools_backup() {
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -112,9 +122,7 @@ if ( !function_exists( 'dbtools_backup' ) ) {
         include($dir.'tools/backup.php');
         exit;
     }
-}
 
-if ( !function_exists( 'dbtools_download' ) ) {
     function dbtools_download() {
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -124,10 +132,8 @@ if ( !function_exists( 'dbtools_download' ) ) {
         echo 'Download';
 
     }
-}
 
 #menu page output here
-if ( !function_exists( 'dbtools_options' ) ) {
     function dbtools_options() {
         if (!current_user_can('manage_options')) {
             wp_die(__('You do not have sufficient permissions to access this page.'));
@@ -145,8 +151,8 @@ if ( !function_exists( 'dbtools_options' ) ) {
         echo '<p>Version '.DBtools_VERSION_NUM.'</p>';
         echo '</div>';
     }
-}
+
 
 register_activation_hook(__FILE__, 'dbtools_install');
-add_action( 'plugins_loaded', 'dbtools_install' );
+ add_action( 'plugins_loaded', 'dbtools_update' );
 ?>
