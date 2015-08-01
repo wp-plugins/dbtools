@@ -72,5 +72,4 @@ Fixed backup creation
 Added table list
 Added analyze tables
 
-= 1.0.0 =
-First stable
+= 1.0.0
