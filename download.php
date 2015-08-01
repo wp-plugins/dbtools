@@ -9,7 +9,7 @@ if (isset($_GET['file'])) {
     $file_name = $_GET['file'];
     $pattern = '/^backup_[\w]+_[\d]{4}-[\d]{2}-[\d]{2}_[\d]{6}\.sql$/i';
     $checkfile = preg_match($pattern, $file_name);
-    $checkfile = TRUE;
+    //$checkfile = TRUE;
     if ($checkfile) {
         header('Content-Type: text/plain');
         //header("Content-Transfer-Encoding: Binary");

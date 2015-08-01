@@ -3,7 +3,7 @@ Contributors: mdgeus
 Tags: tool, tools, database, optimize, backup
 Requires at least: 3.0.1
 Tested up to: 4.2.3
-Stable tag: 1.1.8
+Stable tag: 1.1.9
 License: GPLv2 or later
 
 Wordpress plugin for DB maintenance and backup
@@ -38,8 +38,11 @@ The plugin folder is called DBtools, this is the folder you should upload.
 
 == Changelog ==
 
+= 1.1.9 =
+Only perform update when version is lower the 1.1.7
+
 = 1.1.8 =
-Fixe not sufficient permissions erro
+Fixed "you have not sufficient permissions error"
 
 = 1.1.7 =
 placed backup location outside the plugin directory so your backups will be kept after deactivating or updating this plugin

@@ -18,9 +18,8 @@ echo '<div class="wrap">';
 </form>
 <?php
 //echo DB_NAME;
-//$query = "SHOW TABLES FROM " . DB_NAME;
 $query = "SHOW TABLES FROM ".DB_NAME." LIKE '" . $wpdb->prefix."%'";
-//$result = mysql_query($query);
+
 $result = $wpdb->get_results( $query, ARRAY_N );
 
 //echo $query;
@@ -50,7 +49,6 @@ if (isset($_POST['opt'])) {
 if (isset($_POST['ana'])) {
 
 	echo '<br />';
-	// while ($row = mysql_fetch_row($result)) {
 	foreach ( $result as $row )  {
 		$opt = "ANALYZE TABLE " . $row[0];
 		$go = $wpdb->get_results( $opt, ARRAY_N );
@@ -74,7 +72,6 @@ but only the wordpress tables (<?php echo $wpdb->prefix.'####' ?>) will be ussed
 
 <?php
 $stat = "SHOW TABLE STATUS";
-//$statr = mysql_query($stat);
 $statr = $wpdb->get_results( $stat, OBJECT );
 ?>
 <table width="400px" border="0">
@@ -82,11 +79,7 @@ $statr = $wpdb->get_results( $stat, OBJECT );
 		<td>Name</td><td>Size</td><td>Rows</td><td>Engine</td>
 	</tr>
 	<?php
-	//while ($rstat = mysql_fetch_array($statr)) {
 	foreach ( $statr as $rstat )  {
-		//echo $fivesdraft->post_title;
-		// $size = ($rstat["Data_length"] + $rstat["Index_length"]) / 1024;
-		// echo '<tr><td>' . $rstat['Name'] . '</td><td>' . $size . ' KB.</td><td>' . $rstat['Rows'] . '</td><td>' . $rstat['Engine'] . '</td></tr>';
 		$size = ($rstat->Data_length + $rstat->Index_length) / 1024;
 		echo '<tr><td>' . $rstat->Name . '</td><td>' . $size . ' KB.</td><td>' . $rstat->Rows . '</td><td>' . $rstat->Engine . '</td></tr>';
 	}
