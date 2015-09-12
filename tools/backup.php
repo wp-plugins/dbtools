@@ -15,7 +15,7 @@ if ($dh = opendir($backupdir)) {
 	while (false !== ($entry = readdir($dh))) {
 		if ($entry != "." && $entry != ".." && $entry != "index.php") {
 			echo '<tr><form method="post" action="">';
-			echo '<td><a href="'.plugins_url('DBtools/download.php?file='.$entry).'" title="Download SQL file">'.$entry.'</a></td>';
+			echo '<td><a href="'.admin_url( "admin.php?page=dbtools_download?file=$entry").'" title="Download SQL file">'.$entry.'</a></td>';
 			echo '<td><input type="hidden" name="file" id="file" value="'.$entry.'" />';
 			echo '<input type="submit" name="del" id="del" value="del" /></td>';
 			echo '</form></tr>';

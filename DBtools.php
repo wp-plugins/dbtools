@@ -3,8 +3,8 @@
 /*
 Plugin Name: DBtools
 Plugin URI: http://dennis.famgeus.nl/dbtools-plugin/
-Description: Createa a backup of your wordpress tables
-Version: 1.1.10
+Description: Createa a backup of your wordpress tables and perform basic Analyze and optimize task.
+Version: 1.1.11
 Author: Hands Off
 Author URI: http://www.hands-off.it/
 License: GPL2
@@ -20,19 +20,17 @@ if ( !function_exists( 'add_action' ) ) {
 global $wpdb;
 global $current_user;
 
-if (!defined('DBtools_VERSION_KEY')) {
-    define('DBtools_VERSION_KEY', 'DBtools_version');
-}
-if (!defined('DBtools_VERSION_NUM')) {
-    define('DBtools_VERSION_NUM', '1.1.10');
-}
-add_option(DBtools_VERSION_KEY, DBtools_VERSION_NUM);
-
 $dir = plugin_dir_path( __FILE__ );
+DEFINE('BACKUPDIR', ABSPATH.'dbtoolsbackups');
+
+if (!defined('DBtools_VERSION_NUM')) {
+    define('DBtools_VERSION_NUM', '1.1.11');
+}
+
+add_option(DBtools_VERSION_NUM);
 
 #create the admin menu
 add_action('admin_menu', 'dbtools_menu');
-
 #create the menucode
 function dbtools_menu() {
     //add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position );
@@ -42,45 +40,41 @@ function dbtools_menu() {
     add_submenu_page('dbtools_menu', 'Backup', 'Backup', 'manage_options', 'dbtools_backup', 'dbtools_backup');
 }
 
+
 // Installation script
 function dbtools_install() {
     if (!current_user_can('manage_options')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
     }
-    $backupdir = ABSPATH.'dbtoolsbackups';
-    if (!file_exists($backupdir)) {
-        mkdir($backupdir, 0775, true);
-        if (!file_exists($backupdir.'/index.php')) {
-            $fh = fopen($backupdir.'/index.php', 'w+');
+    if (!file_exists(BACKUPDIR)) {
+        mkdir(BACKUPDIR, 0775, true);
+        if (!file_exists(BACKUPDIR.'/index.php')) {
+            $fh = fopen(BACKUPDIR.'/index.php', 'w+');
             $indexfile = "<?php"."\n";
             $indexfile .= "echo 'No peeking here!';"."\n";
             $indexfile .= "exit;"."\n";
-            $indexfile .= "?>"."\n";
+            $indexfile .= "?";
+            $indexfile .= ">"."\n";
             fwrite($fh, $indexfile);
         }
     }
-    exit;
 }
 
 function dbtools_update() {
-    if (get_site_option( 'DBtools_version' ) < '1.1.7') {
-
-        //only to update from older then 1.1.6 versions
-        $backupdir = ABSPATH.'dbtoolsbackups';
-        if (!file_exists($backupdir)) {
-            mkdir($backupdir, 0775, true);
-            if (!file_exists($backupdir.'/index.php')) {
-                $fh = fopen($backupdir.'/index.php', 'w+');
+        // just double checking if the new backupfolder is present
+        if (!file_exists(BACKUPDIR)) {
+            mkdir(BACKUPDIR, 0775, true);
+            if (!file_exists(BACKUPDIR.'/index.php')) {
+                $fh = fopen(BACKUPDIR.'/index.php', 'w+');
                 $indexfile = "<?php"."\n";
                 $indexfile .= "echo 'No peeking here!';"."\n";
                 $indexfile .= "exit;"."\n";
-                $indexfile .= "?>"."\n";
+                $indexfile .= "?";
+                $indexfile .= ">"."\n";
                 fwrite($fh, $indexfile);
             }
         }
-    }
 }
-
 
 function dbtools_listdb() {
     if (!current_user_can('manage_options')) {
@@ -89,17 +83,13 @@ function dbtools_listdb() {
     # listing tables
 }
 
-
-
 function dbtools_del() {
     if (!current_user_can('manage_options')) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
     }
     # delete backup file
     $file = $_GET['fn'];
-    $backupdir = str_replace('\tools', '\backups' ,$dir);
-    $backupdir = str_replace('/tools', '/backups' ,$backupdir);
-    if(unlink($backupdir.$file)) {
+    if(unlink(BACKUPDIR.$file)) {
         echo 'Backup file ' . $file . ' removed<br />';
     }
     exit;
@@ -123,18 +113,25 @@ function dbtools_backup() {
     }
     global $wpdb;
     global $dir;
-    //$backupdir = $dir.'backups/';
+    //BACKUPDIR = $dir.'backups/';
     include($dir.'tools/backup.php');
     exit;
 }
 
 function dbtools_download() {
-    if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have sufficient permissions to access this page.'));
+    if (isset($_GET['file'])) {
+        $file_name = $_GET['file'];
+        $pattern = '/^backup_[\w]+_[\d]{4}-[\d]{2}-[\d]{2}_[\d]{6}\.sql$/i';
+        $checkfile = preg_match($pattern, $file_name);
+        //$checkfile = TRUE;
+        if ($checkfile) {
+            header('Content-Type: text/plain');
+            //header("Content-Transfer-Encoding: Binary");
+            header("Content-disposition: attachment; filename=\"".$file_name."\"");
+            readfile(BACKUPDIR.$file_name);
+            exit;
+        }
     }
-    global $wpdb;
-    global $dir;
-    echo 'Download';
 
 }
 
@@ -154,9 +151,9 @@ function dbtools_options() {
     </ul></p>';
     echo '<hr />';
     echo '<p>Version '.DBtools_VERSION_NUM.'</p>';
+    echo '<p>Known issues:<br />Not working with PHP5.6.<br />Downloading, opening backupfile from the backuplist will come soon.</p>';
     echo '</div>';
 }
-
 
 register_activation_hook(__FILE__, 'dbtools_install');
 add_action( 'plugins_loaded', 'dbtools_update' );
